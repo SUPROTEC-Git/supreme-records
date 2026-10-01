@@ -40,7 +40,6 @@
             box-sizing: border-box;
         }
 
-        /* Переключатель вкладок */
         .tab-system {
             display: flex;
             gap: 10px;
@@ -69,7 +68,6 @@
             box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
         }
 
-        /* Окно формы */
         .auth-box {
             background: var(--card-bg);
             clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
@@ -165,7 +163,6 @@
 
     <div class="container" data-aos="zoom-in" data-aos-duration="600">
         
-        <!-- Интерактивные вкладки управления -->
         <div class="tab-system">
             <button class="tab-btn active" onclick="switchTab('login')">Вход</button>
             <button class="tab-btn" onclick="switchTab('register')">Регистрация</button>
@@ -194,6 +191,7 @@
                 <input type="hidden" name="_subject" value="Новая Регистрация аккаунта!">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_next" value="https://github.io">
+                
                 <div class="form-group">
                     <label>Придумайте Никнейм</label>
                     <input type="text" name="Рег_Ник" placeholder="Например: StickGod" required>
@@ -217,7 +215,6 @@
     <script>
         AOS.init({ once: true });
 
-        // Логика быстрого переключения вкладок без перезагрузки страницы
         function switchTab(tabId) {
             document.querySelectorAll('.form-panel').forEach(panel => panel.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
