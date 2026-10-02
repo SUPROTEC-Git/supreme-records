@@ -170,30 +170,30 @@
 
         <div class="auth-box">
             
-            <!-- Панель 1: Форма Авторизации -->
+            <!-- Форма 1: Авторизация (Вход) -->
             <form id="login" class="form-panel active">
                 <input type="hidden" name="access_key" value="05357dbe-3a3d-44a2-b985-afefc821d331">
                 <input type="hidden" name="subject" value="Попытка Входа на сайт рекордов!">
                 
                 <div class="form-group">
                     <label>Игровой Никнейм</label>
-                    <input type="text" name="Логин_Ник" placeholder="Введи никнейм" required>
+                    <input type="text" id="login-username" name="Логин_Ник" placeholder="Введи никнейм" required>
                 </div>
                 <div class="form-group">
                     <label>Пароль</label>
-                    <input type="password" name="Логин_Пароль" placeholder="••••••••" required>
+                    <input type="password" id="login-password" name="Логин_Пароль" placeholder="••••••••" required>
                 </div>
                 <button type="submit" class="btn-submit">Авторизоваться</button>
             </form>
 
-            <!-- Панель 2: Форма Регистрации -->
+            <!-- Форма 2: Регистрация -->
             <form id="register" class="form-panel">
                 <input type="hidden" name="access_key" value="05357dbe-3a3d-44a2-b985-afefc821d331">
                 <input type="hidden" name="subject" value="Новая Регистрация аккаунта!">
                 
                 <div class="form-group">
                     <label>Придумайте Никнейм</label>
-                    <input type="text" name="Рег_Ник" placeholder="Например: StickGod" required>
+                    <input type="text" id="reg-username" name="Рег_Ник" placeholder="Например: StickGod" required>
                 </div>
                 <div class="form-group">
                     <label>Ваш Email</label>
@@ -201,7 +201,7 @@
                 </div>
                 <div class="form-group">
                     <label>Придумайте Пароль</label>
-                    <input type="password" name="Рег_Пароль" placeholder="Минимум 6 символов" required>
+                    <input type="password" id="reg-password" name="Рег_Пароль" placeholder="Минимум 6 символов" required>
                 </div>
                 <button type="submit" class="btn-submit">Создать профиль</button>
             </form>
@@ -222,51 +222,55 @@
             event.target.classList.add('active');
         }
 
-        // УМНЫЙ ПЕРЕХВАТЧИК ФОРМ (Бесшовный AJAX)
-        const forms = document.querySelectorAll('form');
-        forms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Запрещаем браузеру куда-либо уходить
+        // Логика бесшовной Регистрации с записью в LocalStorage
+        document.getElementById('register').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const b = this.querySelector('.btn-submit');
+            b.textContent = 'ОТПРАВКА...'; b.disabled = true;
+
+            const name = document.getElementById('reg-username').value;
+            const pass = document.getElementById('reg-password').value;
+
+            fetch('https://web3forms.com', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(new FormData(this)))
+            }).then(() => {
+                localStorage.setItem('stickman_user', name);
+                localStorage.setItem('stickman_pass', pass);
                 
-                const button = form.querySelector('.btn-submit');
-                const originalText = button.textContent;
-                button.textContent = 'ОТПРАВКА...';
-                button.disabled = true;
+                b.textContent = 'УСПЕШНО ЗАПИСАН!';
+                b.style.borderColor = '#00ff00'; b.style.color = '#00ff00';
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            });
+        });
 
-                const formData = new FormData(form);
-                const object = Object.fromEntries(formData);
-                const json = JSON.stringify(object);
+        // Логика Входа с проверкой сохраненных данных
+        document.getElementById('login').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const b = this.querySelector('.btn-submit');
+            const enteredName = document.getElementById('login-username').value;
+            const enteredPass = document.getElementById('login-password').value;
 
-                // Отправляем данные на сервер Web3Forms в фоновом режиме
+            const savedName = localStorage.getItem('stickman_user');
+            const savedPass = localStorage.getItem('stickman_pass');
+
+            if (enteredName === savedName && enteredPass === savedPass) {
+                b.textContent = 'ВХОД ВЫПОЛНЕН!';
+                b.style.borderColor = '#00ff00'; b.style.color = '#00ff00';
+                
                 fetch('https://web3forms.com', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: json
-                })
-                .then(async (response) => {
-                    if (response.status == 200) {
-                        button.textContent = 'УСПЕШНО! ПОДОЖДИТЕ...';
-                        button.style.borderColor = '#00ff00';
-                        button.style.color = '#00ff00';
-                        form.reset();
-                        
-                        // Через 2 секунды плавно уводим игрока на главную
-                        setTimeout(() => {
-                            window.location.href = 'index.html';
-                        }, 2000);
-                    } else {
-                        button.textContent = 'ОШИБКА СЕРВЕРА';
-                        button.disabled = false;
-                    }
-                })
-                .catch(error => {
-                    button.textContent = 'ОШИБКА СЕТИ';
-                    button.disabled = false;
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.fromEntries(new FormData(this)))
                 });
-            });
+
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            } else {
+                b.textContent = 'НЕВЕРНЫЙ НИК ИЛИ ПАРОЛЬ!';
+                b.style.borderColor = '#ff0055'; b.style.color = '#ff0055';
+                setTimeout(() => { b.textContent = 'Авторизоваться'; b.style.borderColor = ''; b.style.color = ''; }, 2000);
+            }
         });
     </script>
 </body>
