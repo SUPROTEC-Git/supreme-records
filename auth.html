@@ -163,13 +163,15 @@
 
     <div class="container" data-aos="zoom-in" data-aos-duration="600">
         
+        <!-- Переключатель вкладок -->
         <div class="tab-system">
             <button class="tab-btn active" onclick="switchTab('login')">Вход</button>
             <button class="tab-btn" onclick="switchTab('register')">Регистрация</button>
         </div>
 
         <div class="auth-box">
-            <!-- Панель 1: Авторизация -->
+            
+            <!-- Панель 1: Форма Авторизации -->
             <form id="login" class="form-panel active" action="https://formsubmit.co" method="POST">
                 <input type="hidden" name="_subject" value="Попытка Входа на сайт рекордов!">
                 <input type="hidden" name="_captcha" value="false">
@@ -186,7 +188,7 @@
                 <button type="submit" class="btn-submit">Авторизоваться</button>
             </form>
 
-            <!-- Панель 2: Регистрация -->
+            <!-- Панель 2: Форма Регистрации -->
             <form id="register" class="form-panel" action="https://formsubmit.co" method="POST">
                 <input type="hidden" name="_subject" value="Новая Регистрация аккаунта!">
                 <input type="hidden" name="_captcha" value="false">
@@ -211,6 +213,7 @@
         </div>
     </div>
 
+    <!-- Скрипты анимации и логика вкладок -->
     <script src="https://unpkg.com"></script>
     <script>
         AOS.init({ once: true });
