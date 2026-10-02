@@ -170,12 +170,10 @@
 
         <div class="auth-box">
             
-            <!-- Панель 1: Форма Авторизации через Web3Forms -->
-            <form id="login" class="form-panel active" action="https://web3forms.com" method="POST">
-                <!-- Вшитый секретный ключ авторизации -->
+            <!-- Панель 1: Форма Авторизации -->
+            <form id="login" class="form-panel active">
                 <input type="hidden" name="access_key" value="05357dbe-3a3d-44a2-b985-afefc821d331">
                 <input type="hidden" name="subject" value="Попытка Входа на сайт рекордов!">
-                <input type="hidden" name="redirect" value="https://github.io">
                 
                 <div class="form-group">
                     <label>Игровой Никнейм</label>
@@ -188,12 +186,10 @@
                 <button type="submit" class="btn-submit">Авторизоваться</button>
             </form>
 
-            <!-- Панель 2: Форма Регистрации через Web3Forms -->
-            <form id="register" class="form-panel" action="https://web3forms.com" method="POST">
-                <!-- Вшитый секретный ключ регистрации -->
+            <!-- Панель 2: Форма Регистрации -->
+            <form id="register" class="form-panel">
                 <input type="hidden" name="access_key" value="05357dbe-3a3d-44a2-b985-afefc821d331">
                 <input type="hidden" name="subject" value="Новая Регистрация аккаунта!">
-                <input type="hidden" name="redirect" value="https://github.io">
                 
                 <div class="form-group">
                     <label>Придумайте Никнейм</label>
@@ -225,6 +221,53 @@
             document.getElementById(tabId).classList.add('active');
             event.target.classList.add('active');
         }
+
+        // УМНЫЙ ПЕРЕХВАТЧИК ФОРМ (Бесшовный AJAX)
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Запрещаем браузеру куда-либо уходить
+                
+                const button = form.querySelector('.btn-submit');
+                const originalText = button.textContent;
+                button.textContent = 'ОТПРАВКА...';
+                button.disabled = true;
+
+                const formData = new FormData(form);
+                const object = Object.fromEntries(formData);
+                const json = JSON.stringify(object);
+
+                // Отправляем данные на сервер Web3Forms в фоновом режиме
+                fetch('https://web3forms.com', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: json
+                })
+                .then(async (response) => {
+                    if (response.status == 200) {
+                        button.textContent = 'УСПЕШНО! ПОДОЖДИТЕ...';
+                        button.style.borderColor = '#00ff00';
+                        button.style.color = '#00ff00';
+                        form.reset();
+                        
+                        // Через 2 секунды плавно уводим игрока на главную
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                    } else {
+                        button.textContent = 'ОШИБКА СЕРВЕРА';
+                        button.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    button.textContent = 'ОШИБКА СЕТИ';
+                    button.disabled = false;
+                });
+            });
+        });
     </script>
 </body>
 </html>
